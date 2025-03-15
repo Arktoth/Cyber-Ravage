@@ -48,6 +48,7 @@ class Player():
         #прыжок
         self.is_jump = False
         self.jump_count = 12
+        self.rect = self.afk.get_rect(topleft=self.position)
 
     def walk(self):
         if keys[pygame.K_a]:
@@ -61,6 +62,7 @@ class Player():
         if keys[pygame.K_d] and self.position[0] < 1780:
             self.position[0] += self.speed
         self.anim_count = (self.anim_count + 1) % 7
+        self.rect = self.afk.get_rect(topleft=self.position)
 
     def jump(self):
         if not self.is_jump:
@@ -126,34 +128,38 @@ class bullet():
         self.rect = bullet.model.get_rect(topleft=self.position)
 
 
+#text
+label = pygame.font.Font('Roboto-Black.ttf', 40)
+#рестарт
+restart_label = label.render('Начать заново', False, (255, 255, 255))
+restart_label_rect = restart_label.get_rect(topleft=(180, 100))
 
 
 player = Player()
 done = True
+gameplay = True
 while done:
-    screen.blit(bg, (0, 0))
-    keys = pygame.key.get_pressed()
-    #игрок
-    player_rect = player.walk_left_anim[0].get_rect(topleft=player.position)
+    if gameplay:
+        screen.blit(bg, (0, 0))
+        keys = pygame.key.get_pressed()
 
-    #ходьба
-    player.walk()
+        #ходьба
+        player.walk()
 
-    #прыжок
-    player.jump()
+        #прыжок
+        player.jump()
 
-    # атака
-    if bullet.all:
-        for (i, el1) in enumerate(bullet.all):
-            el1.move()
-            if el1.position[0] < 0 or el1.position[0] > 2000 or el1.position[1] < -40 or el1.position[1] > 1100 :
-                bullet.all.pop(i)
-            if Enemy.list_in_game:
-                for (j, el2) in enumerate(Enemy.list_in_game):
-                    if el1.rect.colliderect(el2):
-                            Enemy.list_in_game.pop(j)
-                            bullet.all.pop(i)
-
+        # атака
+        if bullet.all:
+            for (i, el1) in enumerate(bullet.all):
+                el1.move()
+                if el1.position[0] < 0 or el1.position[0] > 2000 or el1.position[1] < -40 or el1.position[1] > 1100 :
+                    bullet.all.pop(i)
+                if Enemy.list_in_game:
+                    for (j, el2) in enumerate(Enemy.list_in_game):
+                        if el1.rect.colliderect(el2):
+                                Enemy.list_in_game.pop(j)
+                                bullet.all.pop(i)
 
 
 
@@ -162,17 +168,31 @@ while done:
 
 
 
-    #враг
-    if Enemy.list_in_game:
-        for (i, el) in enumerate(Enemy.list_in_game):
-            screen.blit(Enemy().model, el)
-            el.x -= 10
 
-            if el.x < -300:
-                Enemy.list_in_game.pop(i)
+        #враг
+        if Enemy.list_in_game:
+            for (i, el) in enumerate(Enemy.list_in_game):
+                screen.blit(Enemy().model, el)
+                el.x -= 10
 
-            if player_rect.colliderect(el):
-                gameplay = False
+                if el.x < -300:
+                    Enemy.list_in_game.pop(i)
+
+                if player.rect.colliderect(el):
+                    gameplay = False
+
+    else:
+        screen.fill((0,0,0))
+        screen.blit(restart_label, (180, 100))
+        mouse = pygame.mouse.get_pos()
+        if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            gameplay = True
+            player.position = Vector2(200, 600)
+            Enemy.list_in_game.clear()
+            bullet.all.clear()
+            pygame.time.set_timer(Enemy.enemy_timer, 6000)
+
+
 
 
     pygame.display.update()
