@@ -193,6 +193,7 @@ while done:
         if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             gameplay = True
             player.is_jump = False
+            player.jump_count = 12
             player.position = Vector2(200, 600)
             Enemy.list_in_game.clear()
             bullet.all.clear()
