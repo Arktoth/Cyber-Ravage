@@ -51,11 +51,13 @@ class Player():
         self.rect = self.afk.get_rect(topleft=self.position)
 
     def walk(self):
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] and keys[pygame.K_d]:
+            screen.blit(self.afk, self.position)
+        elif keys[pygame.K_a]:
             screen.blit(self.walk_left_anim[self.anim_count], self.position)  # вывод игрока
-        if keys[pygame.K_d]:
+        elif keys[pygame.K_d]:
             screen.blit(self.walk_right_anim[self.anim_count], self.position)  # вывод игрока
-        if not (keys[pygame.K_a] or keys[pygame.K_d]):
+        elif not (keys[pygame.K_a] or keys[pygame.K_d]):
             screen.blit(self.afk, self.position)
         if keys[pygame.K_a] and self.position[0] > 50:
             self.position[0] -= self.speed
@@ -187,6 +189,7 @@ while done:
         mouse = pygame.mouse.get_pos()
         if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             gameplay = True
+            player.is_jump = False
             player.position = Vector2(200, 600)
             Enemy.list_in_game.clear()
             bullet.all.clear()
