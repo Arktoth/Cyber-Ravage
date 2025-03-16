@@ -94,7 +94,7 @@ class Player():
 #враг
 class Enemy():
     enemy_timer = pygame.USEREVENT + 1
-    pygame.time.set_timer(enemy_timer, 6000)
+    pygame.time.set_timer(enemy_timer, 1000)
     list_in_game = []
     model = pygame.image.load('images/enemy.png').convert_alpha()
 
@@ -134,12 +134,14 @@ class bullet():
 label = pygame.font.Font('Roboto-Black.ttf', 40)
 #рестарт
 restart_label = label.render('Начать заново', False, (255, 255, 255))
-restart_label_rect = restart_label.get_rect(topleft=(180, 100))
-
+restart_label_rect = restart_label.get_rect(topleft=(800, 400))
+#выход
+exit_label = label.render('выйти из игры', False, (255, 255, 255))
+exit_label_rect = exit_label.get_rect(topleft=(800, 500))
 
 player = Player()
 done = True
-gameplay = True
+gameplay = False
 while done:
     if gameplay:
         screen.blit(bg, (0, 0))
@@ -175,7 +177,7 @@ while done:
         if Enemy.list_in_game:
             for (i, el) in enumerate(Enemy.list_in_game):
                 screen.blit(Enemy().model, el)
-                el.x -= 10
+                el.x -= 20
 
                 if el.x < -300:
                     Enemy.list_in_game.pop(i)
@@ -185,7 +187,8 @@ while done:
 
     else:
         screen.fill((0,0,0))
-        screen.blit(restart_label, (180, 100))
+        screen.blit(restart_label, restart_label_rect)
+        screen.blit(exit_label, exit_label_rect)
         mouse = pygame.mouse.get_pos()
         if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             gameplay = True
@@ -193,13 +196,15 @@ while done:
             player.position = Vector2(200, 600)
             Enemy.list_in_game.clear()
             bullet.all.clear()
-            pygame.time.set_timer(Enemy.enemy_timer, 6000)
+            pygame.time.set_timer(Enemy.enemy_timer, 1000)
+        if exit_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            done = False
+            pygame.quit()
 
 
 
 
     pygame.display.update()
-
     for event in pygame.event.get():
         #враги
         if event.type == Enemy.enemy_timer:
