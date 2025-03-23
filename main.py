@@ -138,10 +138,21 @@ restart_label_rect = restart_label.get_rect(topleft=(800, 400))
 #выход
 exit_label = label.render('выйти из игры', False, (255, 255, 255))
 exit_label_rect = exit_label.get_rect(topleft=(800, 500))
+#управление_меню
+move_label = label.render('управление', False, (255, 255, 255))
+move_label_rect = move_label.get_rect(topleft=(830, 600))
+#управление
+jump_label = label.render('прыжок - space', False, (255, 255, 255))
+attak_label = label.render('атака - ЛКМ', False, (255, 255, 255))
+walk_label = label.render('движение влево/вправо - a/d', False, (255, 255, 255))
+#вернуться
+return_label = label.render('обратно', False, (255, 255, 255))
+return_label_rect = return_label.get_rect(topleft=(800, 800))
 
 player = Player()
 done = True
 gameplay = False
+moves_menu = False
 while done:
     if gameplay:
         screen.blit(bg, (0, 0))
@@ -189,6 +200,7 @@ while done:
         screen.fill((0,0,0))
         screen.blit(restart_label, restart_label_rect)
         screen.blit(exit_label, exit_label_rect)
+        screen.blit(move_label, move_label_rect)
         mouse = pygame.mouse.get_pos()
         if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             gameplay = True
@@ -201,6 +213,17 @@ while done:
         if exit_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             done = False
             pygame.quit()
+        if move_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            moves_menu = True
+    if moves_menu:
+        screen.fill((0, 0, 0))
+        screen.blit(walk_label, (800, 400))
+        screen.blit(jump_label, (800, 500))
+        screen.blit(attak_label, (800, 600))
+        screen.blit(return_label, return_label_rect)
+        if return_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            moves_menu = False
+
 
 
 
